@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import scipy
 import json
+import os
 
 def flip(p=0.5):
     """Flips a coin with the given probability.
@@ -39,6 +40,8 @@ def State(**variables):
     return pd.Series(variables, name='state')
 
 def bike_to_wellesley():
+    """
+    """
     if bikeshare.olin == 0:
 #         print('0 bike to move')
         return
@@ -48,6 +51,8 @@ def bike_to_wellesley():
         bikeshare.wellesley += 1
 
 def bike_to_olin():
+    """
+    """
     if bikeshare.wellesley == 0:
 #         print('0 bike to move')
         return
@@ -57,6 +62,8 @@ def bike_to_olin():
         bikeshare.wellesley -= 1
 
 def step(p1, p2):
+    """
+    """
     if flip(p1):
         bike_to_wellesley()
     
@@ -81,12 +88,14 @@ def run_simulation(p1, p2, num_steps):
     for i in range(num_steps):
         step(p1, p2)
         results[i] = bikeshare.olin
-    results.plot()
+    return results
+
+def display_results(results):
+    result_graph = results.plot()
     decorate(title = 'Olin-Wellesley Bikeshare System',
             xlabel = 'Time stop (min)',
             ylabel = 'Number of bikes')
-    plt.savefig(join(output_folder, 'bikeshare.png'))
-
+    result_fig = result_graph.get_figure()
+    return result_fig
 
 bikeshare = State(olin = 6, wellesley = 6)
-run_simulation(0.2, 0.1, 30)
