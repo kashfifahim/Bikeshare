@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import scipy
 import json
-import os
+
 
 def flip(p=0.5):
     """Flips a coin with the given probability.
@@ -39,7 +39,7 @@ def State(**variables):
     """Contains the values of state variables."""
     return pd.Series(variables, name='state')
 
-def bike_to_wellesley():
+def bike_to_wellesley(bikeshare):
     """
     """
     if bikeshare.olin == 0:
@@ -50,7 +50,7 @@ def bike_to_wellesley():
         bikeshare.olin -= 1
         bikeshare.wellesley += 1
 
-def bike_to_olin():
+def bike_to_olin(bikeshare):
     """
     """
     if bikeshare.wellesley == 0:
@@ -61,14 +61,14 @@ def bike_to_olin():
         bikeshare.olin += 1
         bikeshare.wellesley -= 1
 
-def step(p1, p2):
+def step(bikeshare, p1, p2):
     """
     """
     if flip(p1):
-        bike_to_wellesley()
+        bike_to_wellesley(bikeshare)
     
     if flip(p2):
-        bike_to_olin()
+        bike_to_olin(bikeshare)
 
 def TimeSeries(*args, **kwargs):
     """
@@ -83,10 +83,10 @@ def TimeSeries(*args, **kwargs):
         series.name = 'Quantity'
     return series
 
-def run_simulation(p1, p2, num_steps):
+def run_simulation(bikeshare, p1, p2, num_steps):
     results = TimeSeries()
     for i in range(num_steps):
-        step(p1, p2)
+        step(bikeshare, p1, p2)
         results[i] = bikeshare.olin
     return results
 
@@ -97,5 +97,3 @@ def display_results(results):
             ylabel = 'Number of bikes')
     result_fig = result_graph.get_figure()
     return result_fig
-
-bikeshare = State(olin = 6, wellesley = 6)
